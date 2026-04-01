@@ -33,7 +33,7 @@ dependencies {
     implementation("com.zaxxer:HikariCP:5.0.1")
     implementation("io.ktor:ktor-server-content-negotiation:2.3.0")
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.0")
-
+    implementation("org.mindrot:jbcrypt:0.4")
     //implementation("org.jetbrains.exposed:exposed-dao:1.0.0") // For DAO support
     //implementation("org.jetbrains.exposed:exposed-java-time:1.0.0")
     implementation(libs.ktor.server.config.yaml)

@@ -1,5 +1,5 @@
-import org.gradle.internal.impldep.com.jcraft.jsch.jbcrypt.BCrypt
-//import org.mindrot.jbcrypt.BCrypt
+//import org.gradle.internal.impldep.com.jcraft.jsch.jbcrypt.BCrypt
+import org.mindrot.jbcrypt.BCrypt
 
 
 
