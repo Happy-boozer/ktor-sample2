@@ -15,6 +15,7 @@ import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import com.example.DatabaseConnector
 import io.ktor.server.request.receive
+import io.ktor.server.request.receiveParameters
 import org.jetbrains.exposed.v1.jdbc.select
 
 fun main(args: Array<String>) {
@@ -63,10 +64,16 @@ fun Application.configureUserRouting() {
             }
         }*/
 
-        /*post("/user"){
-            val user = call.receive<Users>()
-            call.respondText("User")
-        }*/
+        post("/usver"){
+            val formParameters = call.receiveParameters()
+            val username = formParameters["username"]
+            val phone_number = formParameters["phone_number"]
+            val password = formParameters["password"]
+            if (username != null)
+            {
+                println("BCrypt хэш: $username")
+            }
+        }
     }
 }
 fun Application.module() {

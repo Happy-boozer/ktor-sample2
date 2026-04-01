@@ -2,7 +2,6 @@
 import org.mindrot.jbcrypt.BCrypt
 
 
-
 object PasswordHasherSimple {
 
     /**
@@ -21,10 +20,10 @@ object PasswordHasherSimple {
 }
 
 // Пример использования
-fun main() {
+/*fun main() {
     val hashed = PasswordHasherSimple.hashPassword("MyPassword123")
     println("BCrypt хэш: $hashed")
 
     val isValid = PasswordHasherSimple.verifyPassword("MyPassword123", hashed)
     println("Пароль верный: $isValid")
-}
+}*/
