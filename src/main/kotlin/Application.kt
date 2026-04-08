@@ -14,9 +14,24 @@ import org.jetbrains.exposed.v1.core.Table
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import com.example.DatabaseConnector
+import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
 import io.ktor.server.request.receiveParameters
+import io.ktor.server.request.receiveText
 import org.jetbrains.exposed.v1.jdbc.select
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.SerialName
+
+@Serializable
+data class User(
+    //val id: Int,
+    @SerialName("name")
+    val username: String,  // соответствует name в БД
+    val phone_number: String,  // добавьте
+    val password: String  // добавьте
+)
 
 fun main(args: Array<String>) {
     EngineMain.main(args)
@@ -40,7 +55,10 @@ object Users: Table(){
     override val primaryKey = PrimaryKey(id)
 
 }
-
+val json = Json {
+    ignoreUnknownKeys = true  // игнорировать неизвестные поля
+    isLenient = true          // более гибкий парсинг
+}
 fun Application.configureUserRouting() {
     routing {
         get("/users") {
@@ -65,14 +83,16 @@ fun Application.configureUserRouting() {
         }*/
 
         post("/usver"){
-            val formParameters = call.receiveParameters()
-            val username = formParameters["username"]
-            val phone_number = formParameters["phone_number"]
-            val password = formParameters["password"]
-            if (username != null)
-            {
-                println("BCrypt хэш: $username")
-            }
+            val param = call.receiveParameters()
+            val usver = User(
+                username = param["username"] ?: "",
+                phone_number = param["phone_number"] ?:"",
+                password = param["password"] ?:""
+            )
+
+            println(usver)
+
+            call.respondText("user reg")
         }
     }
 }
