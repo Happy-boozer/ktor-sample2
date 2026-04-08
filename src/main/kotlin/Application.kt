@@ -23,6 +23,9 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.SerialName
+import com.example.PasswordHasherSimple
+import org.jetbrains.exposed.v1.jdbc.insert
+
 
 @Serializable
 data class User(
@@ -30,7 +33,7 @@ data class User(
     @SerialName("name")
     val username: String,  // соответствует name в БД
     val phone_number: String,  // добавьте
-    val password: String  // добавьте
+    var password: String  // добавьте
 )
 
 fun main(args: Array<String>) {
@@ -46,6 +49,7 @@ fun main(args: Array<String>) {
     }.start(wait = true)*/
 }
 
+
 object Users: Table(){
     val id = integer("user_id")
     val phone_number = varchar("phone_number", 12)
@@ -55,10 +59,7 @@ object Users: Table(){
     override val primaryKey = PrimaryKey(id)
 
 }
-val json = Json {
-    ignoreUnknownKeys = true  // игнорировать неизвестные поля
-    isLenient = true          // более гибкий парсинг
-}
+
 fun Application.configureUserRouting() {
     routing {
         get("/users") {
@@ -76,11 +77,7 @@ fun Application.configureUserRouting() {
             //call.response.headers.append("Content-Type", "application/json")
             call.respond(users)
         }
-        /*get("/user"){
-            val User = transaction {
-                Users.select(Users.phone_number )
-            }
-        }*/
+
 
         post("/usver"){
             val param = call.receiveParameters()
@@ -89,10 +86,16 @@ fun Application.configureUserRouting() {
                 phone_number = param["phone_number"] ?:"",
                 password = param["password"] ?:""
             )
+            usver.password = PasswordHasherSimple.hashPassword(usver.password)
 
-            println(usver)
-
-            call.respondText("user reg")
+            val newUser = transaction {
+                Users.insert {
+                    it[name] = usver.username
+                    it[phone_number] = usver.phone_number
+                    it[password] = usver.password
+                }
+            }
+            call.respondText("user reg. $newUser.")
         }
     }
 }

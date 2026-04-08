@@ -1,4 +1,4 @@
-//import org.gradle.internal.impldep.com.jcraft.jsch.jbcrypt.BCrypt
+package com.example
 import org.mindrot.jbcrypt.BCrypt
 
 
