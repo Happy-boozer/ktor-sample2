@@ -25,6 +25,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.SerialName
 import com.example.PasswordHasherSimple
 import org.jetbrains.exposed.v1.jdbc.insert
+import org.jetbrains.exposed.v1.jdbc.transactions.experimental.newSuspendedTransaction
 
 
 @Serializable
@@ -34,6 +35,13 @@ data class User(
     val username: String,  // соответствует name в БД
     val phone_number: String,  // добавьте
     var password: String  // добавьте
+)
+
+@Serializable
+data class Car(
+    var userId: Int,
+    var sign: String,
+    var status: String
 )
 
 fun main(args: Array<String>) {
@@ -60,6 +68,23 @@ object Users: Table(){
 
 }
 
+object Cars: Table(){
+    val id = integer("car_id")
+    val sign = varchar("sign", 9)
+    val user_id = integer("user_id")
+    val satatus = varchar("status", 15)
+}
+
+suspend fun findCarByUserId(UserId: Int): List<Car> = newSuspendedTransaction {
+    Cars.selectAll().filter{ UserId.equals(Cars.user_id) }.map{
+        Car(
+            userId = it[Cars.user_id],
+            sign = it[Cars.sign],
+            status = it[Cars.satatus]
+        )
+    }
+}
+
 fun Application.configureUserRouting() {
     routing {
         get("/users") {
@@ -76,6 +101,17 @@ fun Application.configureUserRouting() {
             }
             //call.response.headers.append("Content-Type", "application/json")
             call.respond(users)
+        }
+
+        get("/suser"){
+            val cars = transaction {
+
+                Cars.selectAll().map{
+                    mapOf(
+                        "UserID" to it[Cars.user_id]
+                    )
+                }
+            }
         }
 
 
