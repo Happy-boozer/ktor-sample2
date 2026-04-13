@@ -6,7 +6,7 @@ import com.example.PasswordHasherSimple.verifyPassword
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.transactions.experimental.newSuspendedTransaction
 
-fun check(password: String, hashed: String): String?{
+fun check(password: String?, hashed: String): String?{
     if(verifyPassword(password, hashed)){
         return password
     }

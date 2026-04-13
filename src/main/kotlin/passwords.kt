@@ -14,7 +14,7 @@ object PasswordHasherSimple {
     /**
      * Проверяет пароль
      */
-    fun verifyPassword(password: String, hashedPassword: String): Boolean {
+    fun verifyPassword(password: String?, hashedPassword: String): Boolean {
         return BCrypt.checkpw(password, hashedPassword)
     }
 }
