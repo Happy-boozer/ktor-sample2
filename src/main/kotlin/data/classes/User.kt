@@ -9,5 +9,5 @@ data class User(
     @SerialName("name")
     val username: String,  // соответствует name в БД
     val phone_number: String,  // добавьте
-    val password: String?  // добавьте
+    var password: String?  // добавьте
 )

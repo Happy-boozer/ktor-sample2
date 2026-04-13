@@ -1,4 +1,4 @@
-package data.functions
+package com.example.data.functions
 
 import com.example.data.classes.User
 import com.example.data.tables.Users
@@ -15,7 +15,7 @@ fun check(password: String, hashed: String): String?{
     }
 }
 
-suspend fun UserbyLogin(Login: String, password: String): User? = newSuspendedTransaction {
+suspend fun UserbyLogin(Login: String, password: String?): User? = newSuspendedTransaction {
     Users.selectAll().filter{ Login.equals(Users.phone_number) }.map{
         User(
             id = it[Users.id],

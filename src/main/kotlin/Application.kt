@@ -6,6 +6,8 @@ import com.example.data.classes.Car
 import com.example.data.classes.User
 import com.example.data.tables.Cars
 import com.example.data.tables.Users
+import com.example.data.functions.insertUser
+import com.example.data.functions.UserbyLogin
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.*
 import io.ktor.server.routing.*
@@ -64,34 +66,36 @@ fun Application.configureUserRouting() {
         }
 
         get("/suser"){
-            val cars = transaction {
-
-                Cars.selectAll().map{
-                    mapOf(
-                        "UserID" to it[Cars.user_id]
-                    )
-                }
+            val param = call.receiveParameters()
+            val usver = User(
+                id = 0,
+                username = param["username"] ?: "",
+                phone_number = param["phone_number"] ?:"",
+                password = param["password"] ?:""
+            )
+            val user = UserbyLogin(usver.phone_number, usver.password)
+            val password = user?.password
+            if (password != null){
+                call.respondText("ok")
             }
+            else{
+                call.respondText("notok")
+            }
+
         }
 
 
         post("/usver"){
             val param = call.receiveParameters()
             val usver = User(
+                id = 0,
                 username = param["username"] ?: "",
                 phone_number = param["phone_number"] ?:"",
                 password = param["password"] ?:""
             )
-            usver.password = PasswordHasherSimple.hashPassword(usver.password)
-
-            val newUser = transaction {
-                Users.insert {
-                    it[name] = usver.username
-                    it[phone_number] = usver.phone_number
-                    it[password] = usver.password
-                }
-            }
-            call.respondText("user reg. $newUser.")
+            usver.password = PasswordHasherSimple.hashPassword(usver.password.toString())
+            insertUser(usver)
+            call.respondText("user reg.")
         }
     }
 }
