@@ -2,6 +2,10 @@ package com.example
 
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.*
+import com.example.data.classes.Car
+import com.example.data.classes.User
+import com.example.data.tables.Cars
+import com.example.data.tables.Users
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.*
 import io.ktor.server.routing.*
@@ -19,7 +23,6 @@ import io.ktor.server.request.receive
 import io.ktor.server.request.receiveParameters
 import io.ktor.server.request.receiveText
 import org.jetbrains.exposed.v1.jdbc.select
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.SerialName
@@ -27,22 +30,6 @@ import com.example.PasswordHasherSimple
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.transactions.experimental.newSuspendedTransaction
 
-
-@Serializable
-data class User(
-    //val id: Int,
-    @SerialName("name")
-    val username: String,  // соответствует name в БД
-    val phone_number: String,  // добавьте
-    var password: String  // добавьте
-)
-
-@Serializable
-data class Car(
-    var userId: Int,
-    var sign: String,
-    var status: String
-)
 
 fun main(args: Array<String>) {
     EngineMain.main(args)
@@ -57,33 +44,6 @@ fun main(args: Array<String>) {
     }.start(wait = true)*/
 }
 
-
-object Users: Table(){
-    val id = integer("user_id")
-    val phone_number = varchar("phone_number", 12)
-    val password = varchar("password", 100)
-    val name = varchar("name", 100)
-
-    override val primaryKey = PrimaryKey(id)
-
-}
-
-object Cars: Table(){
-    val id = integer("car_id")
-    val sign = varchar("sign", 9)
-    val user_id = integer("user_id")
-    val satatus = varchar("status", 15)
-}
-
-suspend fun findCarByUserId(UserId: Int): List<Car> = newSuspendedTransaction {
-    Cars.selectAll().filter{ UserId.equals(Cars.user_id) }.map{
-        Car(
-            userId = it[Cars.user_id],
-            sign = it[Cars.sign],
-            status = it[Cars.satatus]
-        )
-    }
-}
 
 fun Application.configureUserRouting() {
     routing {
