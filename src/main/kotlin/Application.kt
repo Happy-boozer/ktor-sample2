@@ -61,20 +61,25 @@ fun Application.configureUserRouting() {
                 }
                 //Users.select()
             }
+            //print(users)
             //call.response.headers.append("Content-Type", "application/json")
             call.respond(users)
         }
 
-        get("/suser"){
+        post("/gi"){
             val param = call.receiveParameters()
             val usver = User(
                 id = 0,
-                username = param["username"] ?: "",
+                username = "",
                 phone_number = param["phone_number"] ?:"",
                 password = param["password"] ?:""
             )
-            val user = UserbyLogin(usver.phone_number, usver.password)
+            //println(Users.slice(Users.phone_number).selectALL())
+
+            val user = UserbyLogin(usver.phone_number,
+                usver.password)
             val password = user?.password
+            //call.respondText(usver.password.toString())
             if (password != null){
                 call.respondText("ok")
             }

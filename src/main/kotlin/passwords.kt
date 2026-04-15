@@ -17,13 +17,17 @@ object PasswordHasherSimple {
     fun verifyPassword(password: String?, hashedPassword: String): Boolean {
         return BCrypt.checkpw(password, hashedPassword)
     }
+
+
 }
 
 // Пример использования
-/*fun main() {
+fun main() {
     val hashed = PasswordHasherSimple.hashPassword("MyPassword123")
     println("BCrypt хэш: $hashed")
 
+    val ha = ""
+
     val isValid = PasswordHasherSimple.verifyPassword("MyPassword123", hashed)
     println("Пароль верный: $isValid")
-}*/
+}

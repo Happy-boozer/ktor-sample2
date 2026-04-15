@@ -6,5 +6,7 @@ object Cars: Table(){
     val id = integer("car_id")
     val sign = varchar("sign", 9)
     val user_id = integer("user_id")
+
+    val vin = varchar("vin", 16)
     val satatus = varchar("status", 15)
 }

@@ -2,7 +2,7 @@ package com.example.data.tables
 
 import org.jetbrains.exposed.v1.core.Table
 
-object Users: Table(){
+object Users: Table("users"){
     val id = integer("user_id")
     val phone_number = varchar("phone_number", 12)
     var password = varchar("password", 100)

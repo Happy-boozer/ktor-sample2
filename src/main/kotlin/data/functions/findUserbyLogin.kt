@@ -3,6 +3,7 @@ package com.example.data.functions
 import com.example.data.classes.User
 import com.example.data.tables.Users
 import com.example.PasswordHasherSimple.verifyPassword
+import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.transactions.experimental.newSuspendedTransaction
 
@@ -16,7 +17,8 @@ fun check(password: String?, hashed: String): String?{
 }
 
 suspend fun UserbyLogin(Login: String, password: String?): User? = newSuspendedTransaction {
-    Users.selectAll().filter{ Login.equals(Users.phone_number) }.map{
+    Users.selectAll()
+        .where { Users.phone_number eq Login }.map{
         User(
             id = it[Users.id],
             username = it[Users.name],
@@ -24,4 +26,5 @@ suspend fun UserbyLogin(Login: String, password: String?): User? = newSuspendedT
             password = check(password, it[Users.password])
         )
     }.firstOrNull()
+
 }
