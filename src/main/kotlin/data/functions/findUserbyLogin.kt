@@ -16,7 +16,7 @@ fun check(password: String?, hashed: String): String?{
     }
 }
 
-suspend fun UserbyLogin(Login: String, password: String?): User? = newSuspendedTransaction {
+suspend fun UserbyLoginAndPassword(Login: String, password: String?): User? = newSuspendedTransaction {
     Users.selectAll()
         .where { Users.phone_number eq Login }.map{
         User(
@@ -26,5 +26,16 @@ suspend fun UserbyLogin(Login: String, password: String?): User? = newSuspendedT
             password = check(password, it[Users.password])
         )
     }.firstOrNull()
+}
 
+suspend fun UserbyLoginId(Login: String): User? = newSuspendedTransaction {
+    Users.selectAll()
+        .where { Users.phone_number eq Login }.map{
+            User(
+                id = it[Users.id],
+                username = it[Users.name],
+                phone_number = it[Users.phone_number],
+                password = it[Users.password]
+            )
+        }.firstOrNull()
 }

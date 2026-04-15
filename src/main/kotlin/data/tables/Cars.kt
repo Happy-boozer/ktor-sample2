@@ -9,4 +9,6 @@ object Cars: Table(){
 
     val vin = varchar("vin", 16)
     val satatus = varchar("status", 15)
+
+    val name = varchar("name", 30)
 }

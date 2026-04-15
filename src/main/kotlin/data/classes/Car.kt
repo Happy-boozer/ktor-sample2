@@ -6,5 +6,7 @@ import kotlinx.serialization.Serializable
 data class Car(
     var userId: Int,
     var sign: String,
-    var status: String
+    var vin: String,
+    var name: String,
+    val status: String
 )

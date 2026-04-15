@@ -4,33 +4,20 @@ import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.*
 import com.example.data.classes.Car
 import com.example.data.classes.User
-import com.example.data.tables.Cars
 import com.example.data.tables.Users
 import com.example.data.functions.insertUser
-import com.example.data.functions.UserbyLogin
-import io.ktor.server.engine.embeddedServer
+import com.example.data.functions.UserbyLoginAndPassword
 import io.ktor.server.netty.*
 import io.ktor.server.routing.*
 import io.ktor.server.response.*
 import io.ktor.server.engine.*
+import com.example.data.functions.InsertCar
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
-import org.jetbrains.exposed.v1.jdbc.SchemaUtils
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
-import org.jetbrains.exposed.v1.core.Table
-import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.selectAll
-import com.example.DatabaseConnector
-import io.ktor.http.HttpStatusCode
-import io.ktor.server.request.receive
 import io.ktor.server.request.receiveParameters
-import io.ktor.server.request.receiveText
-import org.jetbrains.exposed.v1.jdbc.select
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.SerialName
-import com.example.PasswordHasherSimple
-import org.jetbrains.exposed.v1.jdbc.insert
-import org.jetbrains.exposed.v1.jdbc.transactions.experimental.newSuspendedTransaction
+import com.example.data.functions.UserbyLoginId
+import com.example.data.functions.findCarByUserId
 
 
 fun main(args: Array<String>) {
@@ -76,7 +63,7 @@ fun Application.configureUserRouting() {
             )
             //println(Users.slice(Users.phone_number).selectALL())
 
-            val user = UserbyLogin(usver.phone_number,
+            val user = UserbyLoginAndPassword(usver.phone_number,
                 usver.password)
             val password = user?.password
             //call.respondText(usver.password.toString())
@@ -101,6 +88,33 @@ fun Application.configureUserRouting() {
             usver.password = PasswordHasherSimple.hashPassword(usver.password.toString())
             insertUser(usver)
             call.respondText("user reg.")
+        }
+
+        get("/get_cars"){
+            val param = call.receiveParameters()
+            val usver = User(
+                id = 0,
+                username = "",
+                phone_number = param["phone_number"] ?:"",
+                password = param["password"] ?:""
+            )
+            val user_id = UserbyLoginId(usver.phone_number)!!.id
+            val users_cars = findCarByUserId(user_id)
+            call.respond(users_cars)
+
+        }
+
+        post("/insert_car"){
+            val param = call.receiveParameters()
+            val car = Car(
+                userId = UserbyLoginId(param["login"] ?: "")!!.id,
+                sign = param["plate"] ?:"",
+                vin = param["VIN"] ?:"",
+                name = param["name"] ?:"",
+                status = "2"
+            )
+            print(car)
+            InsertCar(car = car)
         }
     }
 }
