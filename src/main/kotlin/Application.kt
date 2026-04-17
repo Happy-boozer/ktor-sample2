@@ -104,7 +104,7 @@ fun Application.configureUserRouting() {
 
         }
 
-        post("/insert_car"){
+        post("/insertcar"){
             val param = call.receiveParameters()
             val car = Car(
                 userId = UserbyLoginId(param["login"] ?: "")!!.id,

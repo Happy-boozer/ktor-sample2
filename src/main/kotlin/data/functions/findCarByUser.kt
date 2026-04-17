@@ -10,6 +10,8 @@ suspend fun findCarByUserId(UserId: Int): List<Car> = newSuspendedTransaction {
     Cars.selectAll().
     where{ Cars.user_id eq UserId}.map{
         Car(
+            name = it[Cars.name],
+            vin = it[Cars.vin],
             userId = it[Cars.user_id],
             sign = it[Cars.sign],
             status = it[Cars.satatus]
