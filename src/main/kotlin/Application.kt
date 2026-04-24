@@ -10,7 +10,6 @@ import com.example.data.functions.UserbyLoginAndPassword
 import io.ktor.server.netty.*
 import io.ktor.server.routing.*
 import io.ktor.server.response.*
-import io.ktor.server.engine.*
 import com.example.data.functions.InsertCar
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
@@ -55,6 +54,7 @@ fun Application.configureUserRouting() {
 
         post("/gi"){
             val param = call.receiveParameters()
+            print(param)
             val usver = User(
                 id = 0,
                 username = "",
@@ -68,10 +68,13 @@ fun Application.configureUserRouting() {
             val password = user?.password
             //call.respondText(usver.password.toString())
             if (password != null){
+                //print("ok")
                 call.respondText("ok")
             }
             else{
                 call.respondText("notok")
+                /*print("" +
+                        "noto")*/
             }
 
         }
@@ -104,11 +107,14 @@ fun Application.configureUserRouting() {
 
         }
 
-        post("/insertcar"){
+        post("/insert_car"){
             val param = call.receiveParameters()
+            print(param)
+            val pattern = Regex("value=(\\d+)")
+            val value = pattern.find(param["login"] ?: "")?.groupValues?.get(1).toString()
             val car = Car(
-                userId = UserbyLoginId(param["login"] ?: "")!!.id,
-                sign = param["plate"] ?:"",
+                userId = UserbyLoginId(value)!!.id,
+                sighn = param["plate"] ?:"",
                 vin = param["VIN"] ?:"",
                 name = param["name"] ?:"",
                 status = "2"

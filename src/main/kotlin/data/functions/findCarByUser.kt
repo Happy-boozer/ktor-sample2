@@ -13,7 +13,7 @@ suspend fun findCarByUserId(UserId: Int): List<Car> = newSuspendedTransaction {
             name = it[Cars.name],
             vin = it[Cars.vin],
             userId = it[Cars.user_id],
-            sign = it[Cars.sign],
+            sighn = it[Cars.sighn],
             status = it[Cars.satatus]
         )
     }

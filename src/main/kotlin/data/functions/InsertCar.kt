@@ -10,7 +10,7 @@ fun InsertCar(car: Car){
         Cars.insert {
             it[vin] = car.vin
             it[user_id] = car.userId
-            it[sign] = car.sign
+            it[sighn] = car.sighn
             it[name] = car.name
         }
     }
