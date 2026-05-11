@@ -35,6 +35,7 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.0")
         //implementation("org.jetbrains.kotlinx:kotlinx-serlization-json:1.6.3")
     implementation("org.mindrot:jbcrypt:0.4")
+    implementation("com.google.code.gson:gson:2.11.0")
     //implementation("org.jetbrains.exposed:exposed-dao:1.0.0") // For DAO support
     //implementation("org.jetbrains.exposed:exposed-java-time:1.0.0")
     implementation(libs.ktor.server.config.yaml)

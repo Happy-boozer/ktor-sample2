@@ -8,5 +8,5 @@ data class Car(
     var sighn: String,
     var vin: String,
     var name: String,
-    val status: String
+    val status: String? = null
 )

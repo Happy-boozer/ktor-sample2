@@ -2,7 +2,8 @@ package com.example
 
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.*
-import com.example.data.classes.Car
+//import com.example.data.classes.Car
+import com.google.gson.Gson
 import com.example.data.classes.User
 import com.example.data.tables.Users
 import com.example.data.functions.insertUser
@@ -17,10 +18,14 @@ import org.jetbrains.exposed.v1.jdbc.selectAll
 import io.ktor.server.request.receiveParameters
 import com.example.data.functions.UserbyLoginId
 import com.example.data.functions.findCarByUserId
+import io.ktor.http.HttpStatusCode
+import com.example.data.classes.Car
+import io.ktor.http.ContentType
 
 
 fun main(args: Array<String>) {
     EngineMain.main(args)
+
 
     /*embeddedServer(Netty, port = 8080){
         module()
@@ -49,7 +54,8 @@ fun Application.configureUserRouting() {
             }
             //print(users)
             //call.response.headers.append("Content-Type", "application/json")
-            call.respond(users)
+            //call.respond(users)
+            call.respondText("https://gtzed0-95-24-167-178.ru.tuna.am")
         }
 
         post("/gi"){
@@ -93,27 +99,81 @@ fun Application.configureUserRouting() {
             call.respondText("user reg.")
         }
 
-        get("/get_cars"){
-            val param = call.receiveParameters()
-            val usver = User(
-                id = 0,
-                username = "",
-                phone_number = param["phone_number"] ?:"",
-                password = param["password"] ?:""
-            )
-            val user_id = UserbyLoginId(usver.phone_number)!!.id
-            val users_cars = findCarByUserId(user_id)
-            call.respond(users_cars)
+        post("/get_cars") {
+
+                println("=== POST /get_cars called ===")
+
+                // Получаем параметры из тела POST запроса
+                val parameters = call.receiveParameters()
+                val phoneNumber = parameters["phone_number"]
+
+                println("Phone number from POST body: $phoneNumber")
+
+                if (phoneNumber.isNullOrEmpty()) {
+                    println("ERROR: Missing phone_number parameter")
+                    call.respondText(
+                        "Missing phone_number parameter",
+                        status = HttpStatusCode.BadRequest
+                    )
+                    return@post
+                }
+
+                // Находим пользователя по номеру телефона
+                val user = UserbyLoginId(phoneNumber)
+                println("User found: $user")
+
+                if (user == null) {
+                    println("User not found for phone: $phoneNumber")
+                    call.respondText(
+                        "User not found",
+                        status = HttpStatusCode.NotFound
+                    )
+                    return@post
+                }
+
+                // Находим машины пользователя
+                val usersCars: List<Car> = findCarByUserId(user.id)
+                println(usersCars)
+                println("Found ${usersCars.size} cars for user ${user.id}")
+
+
+                // Возвращаем список машин
+            val gson = Gson()
+            val jsonString = gson.toJson(usersCars)
+                call.respondText(jsonString, ContentType.Application.Json)
+
 
         }
+
+        /*get("/get_cars"){
+            // Для GET параметры получаем через call.request.queryParameters
+            val loginValue = call.request.queryParameters["phone_number"]
+            print("${89},${loginValue}")
+
+            if (loginValue == null) {
+                call.respondText("Missing phone_number parameter", status = HttpStatusCode.BadRequest)
+                return@get
+            }
+
+            val user_id = UserbyLoginId(loginValue)?.id
+            if (user_id == null) {
+                call.respondText("User not found", status = HttpStatusCode.NotFound)
+                return@get
+            }
+
+            val users_cars = findCarByUserId(user_id)
+            call.respond(users_cars)
+            print(users_cars)
+        }*/
 
         post("/insert_car"){
             val param = call.receiveParameters()
             print(param)
             val pattern = Regex("value=(\\d+)")
-            val value = pattern.find(param["login"] ?: "")?.groupValues?.get(1).toString()
+            val loginValue = param["login"].toString()
+            //val value = pattern.find(param["login"] ?: "")?.groupValues?.get(1).toString()
             val car = Car(
-                userId = UserbyLoginId(value)!!.id,
+                userId = UserbyLoginId(loginValue)!!.id,
                 sighn = param["plate"] ?:"",
                 vin = param["VIN"] ?:"",
                 name = param["name"] ?:"",

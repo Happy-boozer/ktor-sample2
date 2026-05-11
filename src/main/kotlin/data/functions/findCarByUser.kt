@@ -14,7 +14,7 @@ suspend fun findCarByUserId(UserId: Int): List<Car> = newSuspendedTransaction {
             vin = it[Cars.vin],
             userId = it[Cars.user_id],
             sighn = it[Cars.sighn],
-            status = it[Cars.satatus]
+            status = it[Cars.satatus] ?: "active"
         )
     }
 }
