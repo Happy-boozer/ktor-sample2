@@ -21,20 +21,19 @@ import com.example.data.functions.findCarByUserId
 import io.ktor.http.HttpStatusCode
 import com.example.data.classes.Car
 import io.ktor.http.ContentType
+import io.ktor.server.engine.embeddedServer
 
 
 fun main(args: Array<String>) {
-    EngineMain.main(args)
+    //EngineMain.main(args)
 
 
-    /*embeddedServer(Netty, port = 8080){
+    embeddedServer(Netty,host = "0.0.0.0", port = 3000){
         module()
-        install(ContentNegotiation) {
-            json()
-        }
-        DatabaseConnector.init()
+
+        //DatabaseConnector.init()
         //configureUserRouting()
-    }.start(wait = true)*/
+    }.start(wait = true)
 }
 
 
